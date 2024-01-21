@@ -1,0 +1,21 @@
+{
+  "name": "server",
+  "version": "1.0.0",
+  "description": "Multivendor Ecommerce Backend",
+  "main": "server.mjs",
+  "engines": {
+    "node": "18.x"
+  },
+  "scripts": {
+    "dev": "nodemon server.mjs",
+    "start": "node server.mjs"
+  },
+  "keywords": [
+    "Nodejs"
+  ],
+  "author": "Muhammad Zain-ul-Abdin Ansari",
+  "license": "ISC",
+  "devDependencies": {
+    "nodemon": "^3.0.3"
+  }
+}
