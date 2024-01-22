@@ -25,9 +25,11 @@ if (process.env.NODE_ENV !== "PRODUCTION") {
 // Import routes
 import userRoutes from './routes/user.routes.mjs';
 import vendorRoutes from './routes/vendor.routes.mjs';
+import shopRoutes from './routes/shop.routes.mjs';
 
 app.use("/api/v1/users", userRoutes);
 app.use("/api/v1/vendors", vendorRoutes);
+app.use("/api/v1/shops", shopRoutes);
 
 
 export { app };
