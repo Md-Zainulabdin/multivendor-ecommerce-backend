@@ -71,7 +71,7 @@ export const updateVendor = asyncHandler(async (req, res) => {
     }
 
     if (!vendor) {
-        throw new ApiError("Vendor not found", 400)
+        throw new ApiError("Vendor not found", 404)
     }
 
     if (vendor.id !== req.user?.id) {

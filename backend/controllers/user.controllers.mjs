@@ -66,7 +66,7 @@ export const updateUser = asyncHandler(async (req, res) => {
     let user = await User.findById(id);
 
     if (!user) {
-        throw new ApiError("User not found", 400)
+        throw new ApiError("User not found", 404)
     }
 
     if (user.id !== req.user.id) {
