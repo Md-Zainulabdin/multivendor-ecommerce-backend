@@ -31,7 +31,7 @@ export const registerUser = asyncHandler(async (req, res) => {
         role: "user"
     });
 
-    const createdUser = await User.findById(user._id).select("-password");
+    const createdUser = await User.findById(user._id).select("-password -avatar");
 
     if (!createdUser) {
         throw new ApiError(500, "Something went wrong while registering the user")
@@ -43,7 +43,7 @@ export const registerUser = asyncHandler(async (req, res) => {
 })
 
 /**
- * @route PUT /api/v1/user/update:id
+ * @route PUT /api/v1/users/update:id
  * @desc Update current user
  * @access private
  */
@@ -79,10 +79,86 @@ export const updateUser = asyncHandler(async (req, res) => {
             $set: userFields
         },
         { new: true },
-    ).select("-password")
+    ).select("-password -avatar")
 
     return res.status(200).json(
         new ApiResponse(200, user, "User updated Successfully")
     )
 
 })
+
+/**
+ * @route DELETE /api/v1/users/delete/:id
+ * @desc Delete current user
+ * @access private
+ */
+
+export const deleteUser = asyncHandler(async (req, res) => {
+    const id = req.params.id;
+
+    if (!id) {
+        throw new ApiError("Id is required!", 400);
+    }
+
+    let user = await User.findById(id);
+
+    if (!user) {
+        throw new ApiError("User not found", 404);
+    }
+
+    if (user.id !== req.user.id) {
+        throw new ApiError("Authorization failed", 401);
+    }
+
+    await User.findByIdAndDelete(id);
+
+    return res.status(200).json(
+        new ApiResponse(200, null, "User deleted successfully")
+    );
+});
+
+/**
+ * @route GET /api/v1/users/:id
+ * @desc Get user by ID
+ * @access private
+ */
+
+export const getUserById = asyncHandler(async (req, res) => {
+    const id = req.params.id;
+
+    if (!id) {
+        throw new ApiError("Id is required!", 400);
+    }
+
+    let user = await User.findById(id).select("-password -avatars");
+
+    if (!user) {
+        throw new ApiError("User not found", 404);
+    }
+
+    if (user.id !== req.user.id) {
+        throw new ApiError("Authorization failed", 401);
+    }
+
+    return res.status(200).json(
+        new ApiResponse(200, user, "User retrieved successfully")
+    );
+});
+
+/**
+ * @route GET /api/v1/users
+ * @desc Get all users
+ * @access private
+ */
+
+export const getAllUsers = asyncHandler(async (req, res) => {
+    if (req.user.role !== 'admin') {
+        throw new ApiError("Unauthorized access", 401);
+    }
+
+    const users = await User.find().select("-password");
+
+    return res.status(200).json(
+        new ApiResponse(200, users, "All users retrieved successfully")
+    );
+});

@@ -91,3 +91,87 @@ export const updateVendor = asyncHandler(async (req, res) => {
     )
 
 })
+
+/**
+ * @route DELETE /api/v1/vendors/delete/:id
+ * @desc Delete a vendor
+ * @access private
+ */
+
+export const deleteVendor = asyncHandler(async (req, res) => {
+    const id = req.params.id;
+
+    if (!id) {
+        throw new ApiError("Id is required!", 400);
+    }
+
+    let vendor = await User.findById(id);
+
+    if (!vendor) {
+        throw new ApiError("Vendor not found", 404);
+    }
+
+    if (vendor.role !== "vendor") {
+        throw new ApiError("Invalid request", 400);
+    }
+
+    if (vendor.id !== req.user?.id) {
+        throw new ApiError("Authorization failed", 401);
+    }
+
+    await User.findByIdAndDelete(id);
+
+    return res.status(200).json(
+        new ApiResponse(200, null, "Vendor deleted successfully")
+    );
+});
+
+/**
+ * @route GET /api/v1/vendors/:id
+ * @desc Get a vendor by ID
+ * @access private
+ */
+
+export const getVendorById = asyncHandler(async (req, res) => {
+    const id = req.params.id;
+
+    if (!id) {
+        throw new ApiError("Id is required!", 400);
+    }
+
+    let vendor = await User.findById(id).select("-password");
+
+    if (!vendor) {
+        throw new ApiError("Vendor not found", 404);
+    }
+
+    if (vendor.role !== "vendor") {
+        throw new ApiError("Invalid request", 400);
+    }
+
+    if (vendor.id !== req.user?.id) {
+        throw new ApiError("Authorization failed", 401);
+    }
+
+    return res.status(200).json(
+        new ApiResponse(200, vendor, "Vendor retrieved successfully")
+    );
+});
+
+/**
+ * @route GET /api/v1/vendors
+ * @desc Get all vendors
+ * @access private
+ */
+
+export const getAllVendors = asyncHandler(async (req, res) => {
+    if (req.user.role !== 'admin') {
+        throw new ApiError("Unauthorized access", 401);
+    }
+
+    const vendors = await User.find({ role: 'vendor' }).select("-password");
+
+    return res.status(200).json(
+        new ApiResponse(200, vendors, "All vendors retrieved successfully")
+    );
+});
