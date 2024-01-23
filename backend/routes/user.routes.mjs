@@ -1,7 +1,7 @@
 import { Router } from "express";
 
 import { deleteUser, getAllUsers, getUserById, registerUser, updateUser } from "../controllers/user.controllers.mjs";
-import { loginUser } from "../controllers/login.controller.mjs";
+import { Login } from "../controllers/login.controller.mjs";
 
 import isAuthenticated from "../middlewares/auth.mjs";
 
@@ -9,7 +9,7 @@ import isAuthenticated from "../middlewares/auth.mjs";
 const router = Router();
 
 router.route('/register').post(registerUser)
-router.route("/login").post(loginUser)
+router.route("/login").post(Login)
 
 //secured routes
 router.use(isAuthenticated);

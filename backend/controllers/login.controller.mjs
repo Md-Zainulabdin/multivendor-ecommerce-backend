@@ -17,7 +17,7 @@ const generateToken = async (userId) => {
     }
 }
 
-export const loginUser = asyncHandler(async (req, res) => {
+export const Login = asyncHandler(async (req, res) => {
     const { email, password } = req.body;
 
     if (!email && !password) {
@@ -27,13 +27,13 @@ export const loginUser = asyncHandler(async (req, res) => {
     const user = await User.findOne({ email });
 
     if (!user) {
-        throw new ApiError("User not found", 404)
+        throw new ApiError("Not found", 404)
     }
 
     const isPasswordValid = await user.isPasswordCorrect(password);
 
     if (!isPasswordValid) {
-        throw new ApiError(401, "Invalid user credentials")
+        throw new ApiError(401, "Invalid credentials")
     }
 
     const { accessToken } = await generateToken(user._id);
@@ -51,46 +51,7 @@ export const loginUser = asyncHandler(async (req, res) => {
                 200, {
                 token: accessToken
             },
-                "User logged in Successfully"
-            )
-        )
-})
-
-export const loginVendor = asyncHandler(async (req, res) => {
-    const { email, password } = req.body;
-
-    if (!email && !password) {
-        throw new ApiError("Email & Password are required!", 400)
-    }
-
-    const vendor = await User.findOne({ email });
-
-    if (!vendor) {
-        throw new ApiError("Vendor not found", 404)
-    }
-
-    const isPasswordValid = await vendor.isPasswordCorrect(password);
-
-    if (!isPasswordValid) {
-        throw new ApiError(401, "Invalid vendor credentials")
-    }
-
-    const { accessToken } = await generateToken(vendor._id);
-
-    const options = {
-        httpOnly: true,
-        secure: true
-    }
-
-    return res
-        .status(200)
-        .cookie("accessToken", accessToken, options)
-        .json(
-            new ApiResponse(
-                200, {
-                token: accessToken
-            },
-                "Vendor logged in Successfully"
+                `${user.role.charAt(0).toUpperCase() + user.role.slice(1)} logged in Successfully`
             )
         )
 })
