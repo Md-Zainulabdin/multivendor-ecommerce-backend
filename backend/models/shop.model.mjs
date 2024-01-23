@@ -9,9 +9,15 @@ const shopSchema = new Schema({
         type: String,
         required: [true, "Please enter a description for the shop!"],
     },
-    logo: {
-        type: String, // You can store the URL or file path of the logo
-        default: null,
+    shopLogo: {
+        public_id: {
+            type: String,
+            required: [true, "Please provide the public ID for the shop logo!"],
+        },
+        url: {
+            type: String,
+            required: [true, "Please provide the URL for the shop logo!"],
+        },
     },
     location: {
         type: String,
@@ -24,8 +30,8 @@ const shopSchema = new Schema({
     // Link the shop to a vendor
     Owner: {
         type: Schema.Types.ObjectId,
-        ref: 'vendor', // Reference to the Vendor schema
-        required: true,
+        ref: 'User', // Reference to the Vendor schema
+        required: [true, "Please provide the vendor information!"],
     },
     createdAt: {
         type: Date,

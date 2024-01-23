@@ -3,6 +3,7 @@ import { ApiError } from "../utils/ApiError.mjs"
 import { ApiResponse } from "../utils/ApiResponse.mjs"
 import User from "../models/user.model.mjs";
 import Shop from "../models/shop.model.mjs";
+import { uploadOnCloudinary } from "../utils/cloudinary.mjs"
 
 /**
  * @route POST /api/v1/shops/create
@@ -11,9 +12,9 @@ import Shop from "../models/shop.model.mjs";
  */
 
 export const createShop = asyncHandler(async (req, res) => {
-    const { name, description, logo, location, contact } = req.body;
+    const { name, description, location, contact } = req.body;
 
-    if ([name, description, logo, location, contact].some((field) => field.trim() == "")) {
+    if ([name, description, location, contact].some((field) => field.trim() == "")) {
         throw new ApiError("All fields are required!", 400)
     }
 
@@ -25,13 +26,24 @@ export const createShop = asyncHandler(async (req, res) => {
     }
 
     if (vendor.id !== req.user.id) {
-        throw new ApiError("Unauthorized access.", 403)
+        throw new ApiError("Unauthorized access.", 403);
     }
+
+    const logoLocalPath = req.file?.path;
+
+    if (!logoLocalPath) {
+        throw new ApiError(400, "Logo file is required");
+    }
+
+    const logo = await uploadOnCloudinary(logoLocalPath, "shops-logo")
 
     const shop = await Shop.create({
         name,
         description,
-        logo,
+        shopLogo: {
+            public_id: logo.public_id,
+            url: logo.secure_url
+        },
         location,
         contact,
         Owner: vendorId
@@ -62,13 +74,12 @@ export const updateShop = asyncHandler(async (req, res) => {
 
     const vendorId = req.user?.id;
 
-    const { name, description, logo, location, contact } = req.body;
+    const { name, description, location, contact } = req.body;
 
     const shopFields = {};
 
     if (name) shopFields.name = name;
     if (description) shopFields.description = description;
-    if (logo) shopFields.logo = logo;
     if (location) shopFields.location = location;
     if (contact) shopFields.contact = contact;
 
