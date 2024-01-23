@@ -43,7 +43,7 @@ export const registerUser = asyncHandler(async (req, res) => {
 })
 
 /**
- * @route PUT /api/v1/users/update:id
+ * @route PATCH /api/v1/users/update:id
  * @desc Update current user
  * @access private
  */
@@ -148,7 +148,7 @@ export const getUserById = asyncHandler(async (req, res) => {
 /**
  * @route GET /api/v1/users
  * @desc Get all users
- * @access private
+ * @access private only admin
  */
 
 export const getAllUsers = asyncHandler(async (req, res) => {

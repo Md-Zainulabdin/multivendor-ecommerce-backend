@@ -6,10 +6,11 @@ import { loginVendor } from "../controllers/login.controller.mjs";
 
 import isAuthenticated from "../middlewares/auth.mjs";
 import { isVendor } from "../middlewares/isVendor.mjs"
+import { upload } from "../middlewares/multer.mjs"
 
 const router = Router();
 
-router.route('/register').post(registerVendor)
+router.route('/register').post(upload.single("avatar"), registerVendor)
 router.route("/login").post(loginVendor)
 
 //secured routes

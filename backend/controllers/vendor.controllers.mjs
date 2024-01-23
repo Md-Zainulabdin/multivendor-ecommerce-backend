@@ -3,6 +3,7 @@ import User from "../models/user.model.mjs"
 import { asyncHandler } from "../utils/asyncHandler.mjs"
 import { ApiError } from "../utils/ApiError.mjs"
 import { ApiResponse } from "../utils/ApiResponse.mjs"
+import { uploadOnCloudinary } from "../utils/cloudinary.mjs"
 
 /**
  * @route POST /api/v1/vendors/register
@@ -18,18 +19,33 @@ export const registerVendor = asyncHandler(async (req, res) => {
         throw new ApiError("All fields are required!", 400)
     }
 
+    const avatarLocalPath = req.file?.path;
+
+    if (!avatarLocalPath) {
+        throw new ApiError(400, "Avatar file is required")
+    }
+
     const existedVendor = await User.findOne({ email });
 
     if (existedVendor) {
         throw new ApiError("Vendor with this email already exist", 409)
     }
 
+    const avatar = await uploadOnCloudinary(avatarLocalPath, "avatar");
+
+    if (!avatar) {
+        throw new ApiError(400, "Avatar file is required")
+    }
+
     const vendor = await User.create({
         name,
         email,
         password,
-        avatar: "",
-        role: "vendor"
+        role: "vendor",
+        avatar: {
+            public_id: avatar.public_id,
+            url: avatar.secure_url
+        }
     });
 
     const createdVendor = await User.findById(vendor._id).select("-password");
@@ -44,7 +60,7 @@ export const registerVendor = asyncHandler(async (req, res) => {
 })
 
 /**
- * @route PUT /api/v1/vendors/update:id
+ * @route PATCH /api/v1/vendors/update:id
  * @desc Update current vendors
  * @access private
  */
@@ -160,7 +176,7 @@ export const getVendorById = asyncHandler(async (req, res) => {
 
 /**
  * @route GET /api/v1/vendors
- * @desc Get all vendors
+ * @desc Get all vendors only admin
  * @access private
  */
 
