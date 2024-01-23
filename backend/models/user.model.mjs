@@ -1,5 +1,6 @@
 import mongoose, { Schema } from "mongoose";
 import bcrypt from "bcryptjs"
+import jwt from "jsonwebtoken";
 
 const userSchema = new Schema({
     name: { type: String, required: [true, "Please enter your name!"], },
@@ -16,9 +17,15 @@ const userSchema = new Schema({
         enum: ["user", "vendor"],
         default: "user"
     },
-    avatar: {
-        type: String, // only for vendor's
-        default: null,
+    avatar: {       // Only for vendors
+        public_id: {
+            type: String,
+            default: null
+        },
+        url: {
+            type: String,
+            default: null
+        },
     },
     createdAt: {
         type: Date,
@@ -33,6 +40,17 @@ userSchema.pre("save", async function (next) {
     this.password = await bcrypt.hash(this.password, 10)
     next()
 })
+
+// generate accesstoken
+
+userSchema.methods.generateAccessToken = function () {
+    return jwt.sign({
+        id: this._id,
+        role: this.role,
+    }, process.env.ACCESS_TOKEN_SECRET, {
+        expiresIn: process.env.ACCESS_TOKEN_EXPIRY,
+    })
+}
 
 // compare password
 userSchema.methods.isPasswordCorrect = async function (enteredPassword) {
