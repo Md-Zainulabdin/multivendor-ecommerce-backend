@@ -23,9 +23,28 @@ const productSchema = new mongoose.Schema({
         ref: 'Shop', // Reference to the Shop schema
         required: [true, "Please provide the shop information!"]
     },
+    stock: {
+        type: Number,
+        required: [true, "Please enter product stock"],
+    },
     category: {
         type: String,
-        required: [true, "Please enter the product category!"]
+        required: [true, "Please enter the product category!"],
+        enum: {
+            values: [
+                "Electronics",
+                "Cameras",
+                "Laptops",
+                "Accessories",
+                "Headphones",
+                "Sports",
+            ],
+            message: "Please select correct category",
+        }
+    },
+    ratings: {
+        type: Number,
+        default: 0,
     },
     productImages: [
         {
