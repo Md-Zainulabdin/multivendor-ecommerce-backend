@@ -2,7 +2,7 @@ import { Router } from "express";
 
 import { upload } from "../middlewares/multer.mjs";
 import isAuthenticated from "../middlewares/auth.mjs";
-import { isVendor } from "../middlewares/isVendor.mjs";
+import { isAdminOrVendor } from "../middlewares/isAdminOrVendor.mjs";
 import {
     createProduct,
     deleteProduct,
@@ -10,11 +10,12 @@ import {
     getProductById,
     updateProduct
 } from "../controllers/product.controller.mjs"; // Adjust the path to your product controller
+import { isAdminOrVendor } from "../middlewares/isAdminOrVendor.mjs";
 
 const router = Router();
 
 // Secured routes for vendors
-router.use(isAuthenticated, isVendor);
+router.use(isAuthenticated, isAdminOrVendor);
 
 // Product routes
 router.route('/create').post(upload.array("productImage", 5), createProduct);

@@ -17,4 +17,22 @@ export const isVendor = asyncHandler(async (req, res, next) => {
     }
 
     next();
-})
+});
+
+// middleware that check current user is admin or vendor
+
+export const isAdminOrVendor = asyncHandler(async (req, res, next) => {
+    const userId = req.user?.id;
+
+    if (!userId) {
+        throw new ApiError("Unauthorized", 401);
+    }
+
+    const user = await User.findById(userId).select('role');
+
+    if (!user || (user.role !== "vendor" && user.role !== "admin")) {
+        throw new ApiError("Unauthorized", 401);
+    }
+
+    next();
+});

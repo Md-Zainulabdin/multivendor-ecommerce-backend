@@ -1,7 +1,7 @@
 import { Router } from "express";
 
 import { deleteUser, getAllUsers, getUserById, registerUser, updateUser } from "../controllers/user.controllers.mjs";
-import { Login } from "../controllers/login.controller.mjs";
+import { Login, updatePassword } from "../controllers/login.controller.mjs";
 
 import isAuthenticated from "../middlewares/auth.mjs";
 
@@ -13,8 +13,9 @@ router.route("/login").post(Login)
 
 //secured routes
 router.use(isAuthenticated);
-router.route('/update/:id').patch(updateUser);
-router.route('/delete/:id').delete(deleteUser);
+router.route('/update-account').patch(updateUser);
+router.route('/change-password').patch(updatePassword);
+router.route('/delete-account').delete(deleteUser);
 router.route('/:id').get(getUserById);
 router.route('/').get(getAllUsers);
 
