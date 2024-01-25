@@ -50,12 +50,6 @@ export const registerUser = asyncHandler(async (req, res) => {
 
 export const updateUser = asyncHandler(async (req, res) => {
 
-    const id = req.params.id;
-
-    if (!id) {
-        throw new ApiError("Id is required!", 400)
-    }
-
     const { name, email } = req.body;
 
     const userFields = {};
@@ -63,13 +57,13 @@ export const updateUser = asyncHandler(async (req, res) => {
     if (name) userFields.name = name;
     if (email) userFields.email = email;
 
-    let user = await User.findById(id);
+    let user = await User.findById(req.user?.id);
 
     if (!user) {
         throw new ApiError("User not found", 404)
     }
 
-    if (user.id !== req.user.id) {
+    if (user.id !== req.user?.id) {
         throw new ApiError("Authorization failed", 401)
     }
 
@@ -94,13 +88,8 @@ export const updateUser = asyncHandler(async (req, res) => {
  */
 
 export const deleteUser = asyncHandler(async (req, res) => {
-    const id = req.params.id;
 
-    if (!id) {
-        throw new ApiError("Id is required!", 400);
-    }
-
-    let user = await User.findById(id);
+    let user = await User.findById(req.user?.id);
 
     if (!user) {
         throw new ApiError("User not found", 404);

@@ -10,7 +10,6 @@ import {
     getProductById,
     updateProduct
 } from "../controllers/product.controller.mjs"; // Adjust the path to your product controller
-import { isAdminOrVendor } from "../middlewares/isAdminOrVendor.mjs";
 
 const router = Router();
 

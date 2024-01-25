@@ -67,12 +67,6 @@ export const registerVendor = asyncHandler(async (req, res) => {
 
 export const updateVendor = asyncHandler(async (req, res) => {
 
-    const id = req.params.id;
-
-    if (!id) {
-        throw new ApiError("Id is required!", 400)
-    }
-
     const { name, email } = req.body;
 
     const vendorFields = {};
@@ -80,7 +74,7 @@ export const updateVendor = asyncHandler(async (req, res) => {
     if (name) vendorFields.name = name;
     if (email) vendorFields.email = email;
 
-    let vendor = await User.findById(id);
+    let vendor = await User.findById(req.user?.id);
 
     if (vendor.role !== "vendor") {
         throw new ApiError("Invalid request", 400)
@@ -115,13 +109,8 @@ export const updateVendor = asyncHandler(async (req, res) => {
  */
 
 export const deleteVendor = asyncHandler(async (req, res) => {
-    const id = req.params.id;
 
-    if (!id) {
-        throw new ApiError("Id is required!", 400);
-    }
-
-    let vendor = await User.findById(id);
+    let vendor = await User.findById(req.user?.id);
 
     if (!vendor) {
         throw new ApiError("Vendor not found", 404);

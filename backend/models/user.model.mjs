@@ -14,7 +14,7 @@ const userSchema = new Schema({
     role: {
         type: String,
         required: true,
-        enum: ["user", "vendor"],
+        enum: ["user", "vendor", "admin"],
         default: "user"
     },
     avatar: {       // Only for vendors

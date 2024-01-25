@@ -1,8 +1,9 @@
+import User from "../models/user.model.mjs";
+import Shop from "../models/shop.model.mjs";
+
 import { asyncHandler } from "../utils/asyncHandler.mjs"
 import { ApiError } from "../utils/ApiError.mjs"
 import { ApiResponse } from "../utils/ApiResponse.mjs"
-import User from "../models/user.model.mjs";
-import Shop from "../models/shop.model.mjs";
 import { uploadOnCloudinary } from "../utils/cloudinary.mjs"
 
 /**
@@ -177,7 +178,7 @@ export const getShopById = asyncHandler(async (req, res) => {
 
 
 export const getAllShops = asyncHandler(async (req, res) => {
-    if (req.user.role !== 'admin') {
+    if (req.user?.role !== 'admin') {
         throw new ApiError("Unauthorized access", 401);
     }
     const shops = await Shop.find();
