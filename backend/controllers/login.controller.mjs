@@ -55,12 +55,11 @@ export const Login = asyncHandler(async (req, res) => {
         .status(200)
         .cookie("accessToken", accessToken, options)
         .json(
-            new ApiResponse(
-                200, {
-                token: accessToken
-            },
-                `${user.role.charAt(0).toUpperCase() + user.role.slice(1)} logged in Successfully`
-            )
+            {
+                success: true,
+                message: `${user.role.charAt(0).toUpperCase() + user.role.slice(1)} logged in Successfully`,
+                accessToken,
+            }
         )
 });
 

@@ -8,6 +8,6 @@ export const deleteToken = () => {
   Cookies.remove("accessToken");
 };
 
-export const getToken = () => {
-  Cookies.get("accessToken");
+export const getToken = (): string | undefined => {
+  return Cookies.get("accessToken") || undefined;
 };
